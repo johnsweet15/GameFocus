@@ -14,14 +14,14 @@ export default class Home extends React.Component {
 
     this.state = {
       games: null,
-      cover: null
+      covers: []
     }
   }
 
   componentDidMount() {
     this.getGames();
     this.getCover();
-
+ 
   }
 
   getGames() {
@@ -45,11 +45,11 @@ export default class Home extends React.Component {
       url: "https://cors-anywhere.herokuapp.com/https://api-v3.igdb.com/covers/",
       method: 'POST',
       headers: headers,
-      data: 'fields alpha_channel,animated,game,height,image_id,url,width; where ' + id + ' = 26845;'
+      data: 'fields alpha_channel,animated,game,height,image_id,url,width; where id = ' + id + ';'
     })
     .then(response => {
       console.log('response: ' + JSON.stringify(response.data[0].url));
-      return response.data[0].url;
+      return JSON.stringify(response.data[0].url);
     })
     .catch(err => {
       console.error(err);
@@ -59,10 +59,11 @@ export default class Home extends React.Component {
   render() {
     if (this.state.games) {
       var gameList = this.state.games.map((game, i) =>
-        <div key={i}>
-          <img src={this.getCover(game.id)} />
-          <p>{game.name}</p>
-        </div>
+      {console.log(this.getCover(game.cover))}
+        // <div key={i}>
+        //   <img src={this.getCover(game.cover)} />
+        //   <p>{game.name}</p>
+        // </div>
       )
     }
 

@@ -14,14 +14,15 @@ export default class Home extends React.Component {
 
     this.state = {
       games: null,
-      covers: []
+      covers: [],
+      gameList: {}
     }
   }
 
   componentDidMount() {
     this.getGames();
     this.getCover();
- 
+
   }
 
   getGames() {
@@ -41,30 +42,45 @@ export default class Home extends React.Component {
   }
 
   getCover(id) {
-    axios({
+    return axios({
       url: "https://cors-anywhere.herokuapp.com/https://api-v3.igdb.com/covers/",
       method: 'POST',
       headers: headers,
       data: 'fields alpha_channel,animated,game,height,image_id,url,width; where id = ' + id + ';'
     })
-    .then(response => {
-      console.log('response: ' + JSON.stringify(response.data[0].url));
-      return JSON.stringify(response.data[0].url);
-    })
-    .catch(err => {
-      console.error(err);
+    // .then(response => {
+    //   console.log('response: ' + JSON.stringify(response.data[0].url));
+    //   // return JSON.stringify(response.data[0].url);
+    // })
+    // .catch(err => {
+    //   console.error(err);
+    // });
+  }
+
+  displayCover(id) {
+    this.getCover(id).then(result => {
+      console.log(result.data[0].url);
+      return result;
     });
   }
 
   render() {
     if (this.state.games) {
-      var gameList = this.state.games.map((game, i) =>
-      {console.log(this.getCover(game.cover))}
-        // <div key={i}>
-        //   <img src={this.getCover(game.cover)} />
-        //   <p>{game.name}</p>
-        // </div>
-      )
+      var gameList = this.state.games.map((game, i) => {
+        console.log(String(game.cover))
+        this.getCover(game.cover).then(result => {
+          var url = JSON.stringify(result.data[0].url);
+          // url exists
+          console.log('url', url);
+          return (
+            <div key={i}>
+              {/* url: nah fuck u i dont exist */}
+              <img src={url} />
+              <p>{game.name}</p>
+            </div>
+          )
+        });
+      })
     }
 
     return (
